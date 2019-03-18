@@ -1179,7 +1179,6 @@ Resources:
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
-      Encrypted: true
       FileSystemTags:
         - Key: Name
           Value: !Join [' ', [!Ref 'AWS::StackName', 'cluster shared-files']]
@@ -1219,6 +1218,7 @@ Resources:
       Engine: postgres
       EngineVersion: 9.6
       Iops: !If [DBProvisionedIops, !Ref DBIops, !Ref 'AWS::NoValue']
+      KmsKeyId: !If [UseDatabaseEncryption, !GetAtt EncryptionKey.Arn, !Ref 'AWS::NoValue']
       MasterUsername: postgres
       MasterUserPassword: !If [DoSetDBMasterUserPassword, !Ref DBMasterUserPassword, !Ref 'AWS::NoValue']
       MultiAZ: !Ref DBMultiAZ
@@ -1328,6 +1328,30 @@ Resources:
       FromPort: -1
       ToPort: -1
       SourceSecurityGroupId: !Ref SecurityGroup
+  EncryptionKey:
+    Condition: UseDatabaseEncryption
+    DeletionPolicy: Retain
+    Type: AWS::KMS::Key
+    Properties:
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: !Sub "${AWS::StackName}"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: 'kms:*'
+            Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ["${StackName} Encryption Key", StackName: !Ref 'AWS::StackName']
+  EncryptionKeyAlias:
+    Condition: UseDatabaseEncryption
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub "alias/${AWS::StackName}"
+      TargetKeyId: !Ref EncryptionKey
 Outputs:
   ServiceURL:
     Description: The URL to access this Atlassian service
@@ -1365,6 +1389,10 @@ Outputs:
   DBEndpointAddress:
     Description: The Database Connection String
     Value: !GetAtt DB.Endpoint.Address
+  DBEncryptionKey:
+    Condition: UseDatabaseEncryption
+    Description: The alias of the encryption key created for RDS
+    Value: !Ref EncryptionKeyAlias
   EFSCname:
     Description: The cname of the EFS
     Value: !If
