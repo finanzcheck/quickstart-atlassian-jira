@@ -346,8 +346,7 @@ Parameters:
     NoEcho: True
     MaxLength: 128
     MinLength: 8
-    Type: 'AWS::SSM::Parameter::Value<SecureString>'
-    Default: /atlassian/jira/db/master_password
+    Type: String
   DBMaxIdle:
     Default: 20
     Description: The maximum number of database connections that are allowed to remain idle in the pool
@@ -379,8 +378,7 @@ Parameters:
     MinLength: 8
     MaxLength: 128
     NoEcho: true
-    Type: 'AWS::SSM::Parameter::Value<SecureString>'
-    Default: /atlassian/jira/db/user_password
+    Type: String
   DBPoolMaxSize:
     Default: 20
     Description: The maximum number of database connections that can be opened at any time
