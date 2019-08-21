@@ -1277,9 +1277,9 @@ Resources:
           - !Ref AWS::NoValue
       HealthCheck:
         Target: !If [UseContextPath, !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, !Ref TomcatContextPath, '/status']], !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, '/status']]]
-        Timeout: 29
-        Interval: 30
-        UnhealthyThreshold: 2
+        Timeout: 59
+        Interval: 60
+        UnhealthyThreshold: 3
         HealthyThreshold: 2
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
