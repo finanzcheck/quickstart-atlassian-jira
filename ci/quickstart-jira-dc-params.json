@@ -4,12 +4,8 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
-        "ParameterKey": "AssociatePublicIpAddress",
-        "ParameterValue": "false"
-    },
-    {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "$[taskcat_genpass_8]"
+        "ParameterValue": "f925dO1ry_"
     },
     {
         "ParameterKey": "DBMultiAZ",
@@ -17,7 +13,7 @@
     },
     {
         "ParameterKey": "DBPassword",
-        "ParameterValue": "$[taskcat_genpass_8]"
+        "ParameterValue": "f925dO1ry_"
     },
     {
         "ParameterKey": "DBStorage",
@@ -38,10 +34,6 @@
     {
         "ParameterKey":"QSS3KeyPrefix",
         "ParameterValue":"quickstart-atlassian-jira/"
-    },
-    {
-        "ParameterKey":"CidrBlock",
-        "ParameterValue":"10.0.0.0/16"
     },
     {
         "ParameterKey":"AccessCIDR",
