@@ -351,7 +351,6 @@ Parameters:
       - db.t2.large
       - db.t2.xlarge
       - db.t2.2xlarge
-      - db.t3.medium
     ConstraintDescription: Must be a valid RDS instance class, from the selection list
     Description: RDS instance type (must be r family if using Aurora).
     Type: String
@@ -371,8 +370,7 @@ Parameters:
     NoEcho: True
     MaxLength: 128
     MinLength: 8
-    Type: 'AWS::SSM::Parameter::Value<SecureString>'
-    Default: /atlassian/db/master_password
+    Type: String
   DBMaxIdle:
     Default: 20
     Description: The maximum number of database connections that are allowed to remain idle in the pool
@@ -404,8 +402,7 @@ Parameters:
     MinLength: 8
     MaxLength: 128
     NoEcho: true
-    Type: 'AWS::SSM::Parameter::Value<SecureString>'
-    Default: /atlassian/db/user_password
+    Type: String
   DBPoolMaxSize:
     Default: 20
     Description: The maximum number of database connections that can be opened at any time
@@ -1194,30 +1191,7 @@ Resources:
         - !Join ['.', [!Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws.com.']]
 # Database
   DB:
-<<<<<<< HEAD
-    Type: AWS::RDS::DBInstance
-    Properties:
-      AllocatedStorage: !Ref DBStorage
-      DBInstanceClass: !Ref DBInstanceClass
-      DBInstanceIdentifier: !Ref AWS::StackName
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      Engine: postgres
-      EngineVersion: 9.6.11
-      Iops: !If [DBProvisionedIops, !Ref DBIops, !Ref 'AWS::NoValue']
-      MasterUsername: postgres
-      MasterUserPassword: !If [DoSetDBMasterUserPassword, !Ref DBMasterUserPassword, !Ref 'AWS::NoValue']
-      MultiAZ: !Ref DBMultiAZ
-      StorageEncrypted: !If [UseDatabaseEncryption, !Ref DBStorageEncrypted, !Ref 'AWS::NoValue']
-      StorageType: !If [DBProvisionedIops, io1, gp2]
-      Tags:
-        - Key: Name
-          Value: !Sub ["${StackName} Jira PostgreSQL Database", StackName: !Ref 'AWS::StackName']
-      VPCSecurityGroups: [!Ref SecurityGroup]
-  DBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-=======
     Type: AWS::CloudFormation::Stack
->>>>>>> upstream/develop
     Properties:
       TemplateURL: !Sub
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-database-for-atlassian-services.yaml
@@ -1362,8 +1336,6 @@ Resources:
       FromPort: -1
       ToPort: -1
       SourceSecurityGroupId: !Ref SecurityGroup
-<<<<<<< HEAD
-=======
   EncryptionKey:
     Condition: UseDatabaseEncryption
     DeletionPolicy: Retain
@@ -1405,7 +1377,6 @@ Resources:
         AsgToMonitor: !Ref ClusterNodeGroup
         DatabaseIdentifier: !Sub ["${DBStackNamePrefix}-db", {DBStackNamePrefix: !Ref 'AWS::StackName'}]
 
->>>>>>> upstream/develop
 Outputs:
   ServiceURL:
     Description: The URL to access this Atlassian service
@@ -1442,15 +1413,11 @@ Outputs:
     }
   DBEndpointAddress:
     Description: The Database Connection String
-<<<<<<< HEAD
-    Value: !GetAtt DB.Endpoint.Address
-=======
     Value: !GetAtt DB.Outputs.RDSEndPointAddress
   DBEncryptionKey:
     Condition: UseDatabaseEncryption
     Description: The alias of the encryption key created for RDS
     Value: !Ref EncryptionKeyAlias
->>>>>>> upstream/develop
   EFSCname:
     Description: The cname of the EFS
     Value: !If
